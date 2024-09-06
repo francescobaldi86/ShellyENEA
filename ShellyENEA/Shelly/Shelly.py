@@ -6,7 +6,7 @@ import pandas as pd
 import yaml
 
 __HERE__ = os.path.dirname(os.path.realpath(__file__))
-with open(f"{__HERE__}{os.Path.separator}shelly_data_config.yaml") as file:
+with open(os.path.join(__HERE__,"shelly_data_config.yaml")) as file:
     BASE_CONFIG = yaml.safe_load(file)
 
 

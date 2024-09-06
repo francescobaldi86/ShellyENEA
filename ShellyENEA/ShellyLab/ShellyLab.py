@@ -38,7 +38,7 @@ class ShellyLab():
         for shelly_name, shelly in self.shellys.items():
             shelly.erase_data()
 
-    def export_data(self, file_location = None, file_name = None, change_name_every_day = True, verbose = T>
+    def export_data(self, file_location = None, file_name = None, change_name_every_day = True, verbose = True):
         """
         Allows exporting the data to a .csv file
         """
@@ -61,7 +61,7 @@ class ShellyLab():
         for shelly_name, shelly in self.shellys.items():
             for column in shelly.data.columns:
                 data.loc[:,(shelly_name, column)] = shelly.data.loc[:, column]
-        data.to_csv(f'{file_location}{os.Path.separator}{file_name}.csv', sep=";")
+        data.to_csv(os.path.join(file_location, f'{file_name}.csv'), sep=";")
         self.current_date = datetime.now().strftime("%Y-%m-%d")  # Updates current date
         if verbose:
             print(f'Saving data from Shelly lab {self.name} at {file_location} on {file_name}')
