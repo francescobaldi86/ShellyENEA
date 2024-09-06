@@ -179,4 +179,6 @@ class AddOn():
         for channel in self.channels:
             if channel['type'] == 'Temperature':
                 data.loc[current_time, f"Temperature:{channel['name']}"] = temp['temperature:100']['tC']
+            if channel['type'] == 'Current':
+                data.loc[current_time, f"Current:{channel['name']}"] = temp['voltmeter:100']['xvoltage']
         return data
