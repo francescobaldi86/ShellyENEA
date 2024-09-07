@@ -178,7 +178,7 @@ class AddOn():
         data = pd.DataFrame(index = [current_time])
         for channel in self.channels:
             if channel['type'] == 'Temperature':
-                data.loc[current_time, f"Temperature:{channel['name']}"] = temp['temperature:100']['tC']
+                data.loc[current_time, f"Temperature:{channel['name']}"] = temp[f'temperature:{channel["id"]}']['tC']
             if channel['type'] == 'Current':
-                data.loc[current_time, f"Current:{channel['name']}"] = temp['voltmeter:100']['xvoltage']
+                data.loc[current_time, f"Current:{channel['name']}"] = temp[f'voltmeter:{channel["id"]}']['xvoltage']
         return data

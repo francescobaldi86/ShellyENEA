@@ -57,7 +57,7 @@ class ShellyLab():
             for column in shelly.data.columns:
                 multi_index[0].append(shelly_name)
                 multi_index[1].append(column)
-        data = pd.DataFrame(columns = pd.MultiIndex.from_tuples(list(zip(*multi_index)), names=["shelly", ">
+        data = pd.DataFrame(columns = pd.MultiIndex.from_tuples(list(zip(*multi_index)), names=["shelly", "variable"]), index=index)
         for shelly_name, shelly in self.shellys.items():
             for column in shelly.data.columns:
                 data.loc[:,(shelly_name, column)] = shelly.data.loc[:, column]
