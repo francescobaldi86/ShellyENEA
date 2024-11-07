@@ -4,7 +4,7 @@ import pandas as pd
 import yaml
 from schedule import Scheduler
 from time import sleep
-from ShellyENEA.Shelly import Shelly
+from ShellyENEA.ShellyENEA.Shelly.Shelly import Shelly
 
 
 
@@ -19,6 +19,7 @@ class ShellyLab():
         for shelly_name, shelly_config in config.items():
             self.shellys[shelly_name] = Shelly.create_new(shelly_config)
         self.current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        self.current_date = datetime.now().strftime("%Y-%m-%d")
         self.file_location = file_location
 
     def read_data(self, current_time = None, verbose = True):
@@ -80,6 +81,8 @@ class ShellyLab():
         :param: file_name           Name of the file where to save the data. If not provided, uses "Shelly_data"
         :param: change_name_every_day    If true, changes the name of the file every day. If false, it always uses the same name
         """
+        print('Start monitoring Shelly lab', self.name)
+        print('Data will be saved to', file_location)
         file_name = f'data_shelly_{self.name}'
         scheduler = Scheduler()
         # Read data from the Shellys every READ_DATA_INTERVAL seconds
