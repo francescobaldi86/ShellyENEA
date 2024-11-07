@@ -4,9 +4,10 @@ import os
 from datetime import datetime
 import pandas as pd
 import yaml
+from ShellyENEA.ShellyENEA.__init__ import ENEASHELLY_RESOURCES_PATH
 
 __HERE__ = os.path.dirname(os.path.realpath(__file__))
-with open(os.path.join(__HERE__,"shelly_data_config.yaml")) as file:
+with open(os.path.join(ENEASHELLY_RESOURCES_PATH,"shelly_data_config.yaml")) as file:
     BASE_CONFIG = yaml.safe_load(file)
 
 
@@ -59,11 +60,15 @@ class Shelly:
                 url = f"http://{self.ip}/rpc/Shelly.GetStatus"
         temp = Shelly.send_request(url)
         self.current_time = current_time if current_time else datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        for var_name, var_location in self.vars.items():
-            self.data.loc[self.current_time, var_name] = Shelly.read_from_field(temp, var_location)
-        # Read also data from the addon
-        if self.addon:
-            self.data = self.data.combine_first(self.addon.read_data(temp, self.current_time))
+        try:
+            for var_name, var_location in self.vars.items():
+                self.data.loc[self.current_time, var_name] = Shelly.read_from_field(temp, var_location)
+            # Read also data from the addon
+            if self.addon:
+                self.data = self.data.combine_first(self.addon.read_data(temp, self.current_time))
+        except (ValueError, TypeError):
+            print(f"Could not read data at time {current_time} for Shelly {self.type}")
+            
             
     def erase_data(self):
         """
@@ -86,6 +91,8 @@ class Shelly:
                 return Shelly_RGBW2(config)
             case "Dimmer":
                 return Shelly_Dimmer(config)
+            case "1Plus":
+                return Shelly_1Plus(config)
 
     
     @staticmethod
@@ -107,12 +114,12 @@ class Shelly:
         Sends the http request to the shelly given the correct IP address and url request
         """
         try:
-            response = requests.post(url)  #, data=body_data
+            response = requests.get(url)  #, data=body_data
         except Exception as error:
             print('Error:', error)
             return
         if response.status_code != 200:
-            print(f"Error in the request: {response.status_code} - {response.text}")
+            print(f"Error in the request: {response.status_code} - {response.text}", '  with request ', url)
             return
         jsondata = json.loads(response.text)
         return jsondata
@@ -164,6 +171,13 @@ class Shelly_RGBW2(Shelly):
     def __init__(self, config):
         super().__init__(config)
         
+class Shelly_1Plus(Shelly):
+    """
+    Extends the Shelly class to handle a Shelly 1PM device
+    """
+    def __init__(self, config):
+        super().__init__(config)
+        
 
 class AddOn():
     """
@@ -180,5 +194,5 @@ class AddOn():
             if channel['type'] == 'Temperature':
                 data.loc[current_time, f"Temperature:{channel['name']}"] = temp[f'temperature:{channel["id"]}']['tC']
             if channel['type'] == 'Current':
-                data.loc[current_time, f"Current:{channel['name']}"] = temp[f'voltmeter:{channel["id"]}']['xvoltage']
+                data.loc[current_time, f"Current:{channel['name']}"] = temp[f'voltmeter:{channel["id"]}']['voltage']
         return data
