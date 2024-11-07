@@ -1,13 +1,11 @@
-import requests
-import json
-import os
+import requests, json, os, yaml
 from datetime import datetime
 import pandas as pd
-import yaml
-from ShellyENEA.ShellyENEA.__init__ import ENEASHELLY_RESOURCES_PATH
+from importlib import resources as impresources
+from . import lib
 
-__HERE__ = os.path.dirname(os.path.realpath(__file__))
-with open(os.path.join(ENEASHELLY_RESOURCES_PATH,"shelly_data_config.yaml")) as file:
+base_shelly_data = impresources.files(lib) / 'shelly_data_config.yaml'
+with open(base_shelly_data) as file:
     BASE_CONFIG = yaml.safe_load(file)
 
 
