@@ -35,9 +35,9 @@ class Shelly:
         self.vars = {}
         for var_info in BASE_CONFIG[self.type]['vars']:
             try:
-                name = f'{var_info["unit"]}:{self.config[var_info['custom_name_field']]}'.rstrip(":")
+                name = f'{var_info["unit"]}:{self.config[var_info["custom_name_field"]]}'.rstrip(":")
             except KeyError:
-                name = f'{var_info["unit"]}:{var_info['default_name']}'.rstrip(":")
+                name = f'{var_info["unit"]}:{var_info["default_name"]}'.rstrip(":")
             self.vars[name] = var_info['location']
 
     def config_addon(self, config):
