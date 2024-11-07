@@ -4,7 +4,7 @@ import pandas as pd
 import yaml
 from schedule import Scheduler
 from time import sleep
-from ShellyENEA.ShellyENEA.Shelly.Shelly import Shelly
+from Shelly import Shelly
 
 
 
