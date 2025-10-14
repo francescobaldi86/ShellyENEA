@@ -20,7 +20,7 @@ classifiers = [
 ]
 
 dependencies = [
-    "requests", "json", "yaml", "datetime", "importlib", "pandas", "schedule", "os"
+    "requests", "pyyaml", "datetime", "importlib", "pandas", "schedule", "os"
 ]
 
 [project.optional-dependencies]
