@@ -1,7 +1,6 @@
 import requests, json, yaml, os
 from datetime import datetime
 import pandas as pd
-import data
 
 __HERE__ = os.path.dirname(os.path.realpath(__file__))
 with open(os.path.join(__HERE__, 'data', 'shelly_data_config.yaml')) as file:

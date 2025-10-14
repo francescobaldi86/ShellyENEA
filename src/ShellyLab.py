@@ -1,5 +1,5 @@
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 import pandas as pd
 from schedule import Scheduler
 from time import sleep
@@ -20,6 +20,7 @@ class ShellyLab():
         self.current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         self.current_date = datetime.now().strftime("%Y-%m-%d")
         self.file_location = file_location
+        self.scheduler = Scheduler()
 
     def read_data(self, current_time = None, verbose = True):
         """
@@ -69,6 +70,7 @@ class ShellyLab():
     def start_monitoring(self, 
                               acquisition_rate = 1, 
                               save_rate = 10,
+                              duration = 10,
                               file_location = None,
                               file_name = None,
                               change_name_every_day = True):
@@ -83,18 +85,30 @@ class ShellyLab():
         print('Start monitoring Shelly lab', self.name)
         print('Data will be saved to', file_location)
         file_name = f'data_shelly_{self.name}'
-        scheduler = Scheduler()
+        [value, unit] = duration.split(' ')
+        match unit:
+            case 's', 'secs', 'seconds':
+                end_monitoring = datetime.now() + timedelta(minutes = float(value))
+            case 'm', 'min', 'mins', 'minutes':
+                end_monitoring = datetime.now() + timedelta(minutes = float(value))
+            case 'h', 'hours':
+                end_monitoring = datetime.now() + timedelta(hours = float(value))
+            case 'min', 'm':
+                end_monitoring = datetime.now() + timedelta(minutes = float(value))
+            case 'd', 'days': 
+                end_monitoring = datetime.now() + timedelta(days = float(value))
         # Read data from the Shellys every READ_DATA_INTERVAL seconds
-        scheduler.every(acquisition_rate).minutes.do(self.read_data)
+        self.scheduler.every(acquisition_rate).minutes.do(self.read_data)
         # Every X timers, save the data to a CSV file
         if file_location:
             data_files_directory = file_location
         else:
             data_files_directory = self.file_location
-        scheduler.every(save_rate).minutes.do(self.export_data, file_location = data_files_directory, file_name = file_name)
-        while True:
-            scheduler.run_pending()
+        self.scheduler.every(save_rate).minutes.do(self.export_data, file_location = data_files_directory, file_name = file_name)
+        while self.current_time <= end_monitoring:
+            self.scheduler.run_pending()
             sleep(1)
+            self.current_time = datetime.now()
 
 
 class ShellyEnvironment():

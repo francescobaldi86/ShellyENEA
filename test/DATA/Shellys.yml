@@ -1,0 +1,27 @@
+Lampedusa:
+  EM:
+    ip: "192.168.95.190"
+    mac_address: "c4:5b:be:e2:3b:13"
+    location: "Lampedusa"
+    type: "EM"
+    channel_1_name: 'Power from grid'
+    channel_2_name: 'Power to boiler'
+  1PM:
+    ip: "192.168.95.192"
+    mac_address: "e4:65:b8:94:0d:70"
+    location: "Lampedusa"
+    type: "1PM"
+    channels:
+      - 'Boiler'
+    addon:
+      channels:
+        - {'type': 'Temperature', 'id': '100', 'name': 'HP internal'}
+        - {'type': 'Temperature', 'id': '101', 'name': 'HP outlet'}
+  1Plus:
+    ip: "192.168.95.191"
+    mac_address: "b8:d6:1a:86:9a:fc"
+    location: "Lampedusa"
+    type: "1Plus"
+    addon:
+      channels:
+        - {'type': 'Current', 'id': '100', 'name': 'FV current'}
