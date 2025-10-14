@@ -7,9 +7,9 @@ name = "ShellyENEA"
 version = "0.1.0"
 description = "Python project to read data and manage sets of Shelly devices"
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.13"
 authors = [
-    { name = "Francesco Baldi", email = "your.email@example.com" }
+    { name = "Francesco Baldi", email = "francesco.baldi@enea.it" }
 ]
 license = { text = "GPL-3.0" }
 keywords = ["Shelly", "IoT", "Home Automation"]
@@ -29,5 +29,5 @@ dev = [
 ]
 
 [tool.setuptools]
-packages = ["ShellyENEA"]
+packages = ["src"]
 include-package-data = true
