@@ -1,11 +1,10 @@
-import requests, json, yaml
+import requests, json, yaml, os
 from datetime import datetime
 import pandas as pd
-from importlib import resources as impresources
 import data
 
-base_shelly_data = impresources.files(data) / 'shelly_data_config.yaml'
-with open(base_shelly_data) as file:
+__HERE__ = os.path.dirname(os.path.realpath(__file__))
+with open(os.path.join(__HERE__, 'data', 'shelly_data_config.yaml')) as file:
     BASE_CONFIG = yaml.safe_load(file)
 
 
