@@ -27,7 +27,5 @@ dependencies = [
 dev = [
     "pytest>=6.2",
 ]
-
-[tool.setuptools]
-packages = ["src"]
-include-package-data = true
+[tool.setuptools.packages.find]
+where = ["src"]
