@@ -63,14 +63,20 @@ class Shelly:
                 url = f"http://{self.ip}/rpc/Shelly.GetStatus"
         temp = Shelly.send_request(url)
         self.current_time = current_time if current_time else datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        try:
-            for var_name, var_location in self.vars.items():
+        for var_name, var_location in self.vars.items():
+            try:
                 self.data.loc[self.current_time, var_name] = Shelly.read_from_field(temp, var_location)
+            except (ValueError, TypeError):
+                print(f"Could not read data at time {current_time} for Shelly {self.type}")
+                self.data.loc[self.current_time, var_name] = pd.NA
             # Read also data from the addon
             if self.addon:
-                self.data = self.data.combine_first(self.addon.read_data(temp, self.current_time))
-        except (ValueError, TypeError):
-            print(f"Could not read data at time {current_time} for Shelly {self.type}")
+                try: 
+                    self.data = self.data.combine_first(self.addon.read_data(temp, self.current_time))
+                except (ValueError, TypeError):
+                    print(f"Could not read data at time {current_time} for Shelly {self.type}'s Add On")
+
+        
             
             
     def erase_data(self):
