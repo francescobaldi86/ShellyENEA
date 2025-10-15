@@ -32,7 +32,7 @@ dev = [
 where = ["src"]
 
 [tool.setuptools.package-data]
-ShellyENEA = ["data/*.yml"]
+ShellyENEA = ["data/*"]
 
 [tool.setuptools]
 include-package-data = true
