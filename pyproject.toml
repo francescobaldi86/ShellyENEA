@@ -27,5 +27,12 @@ dependencies = [
 dev = [
     "pytest>=6.2",
 ]
+
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.package-data]
+"ShellyENEA" = ["data/*.yml"]
+
+[tool.setuptools]
+include-package-data = true
