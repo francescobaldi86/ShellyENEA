@@ -33,3 +33,5 @@ Dimmer:
     - {"unit": "Power", "default_name": "", "custom_name_field": "power_measure_name", "location": "switch:0_apower"}
     - {"unit": "Status", "default_name": "", "custom_name_field": "shelly_status_name", "location": "switch:0_output"}
     - {"unit": "Temperature", "default_name": "Shelly", "custom_name_field": "shelly_temperature_name", "location": "light:0_temperature_tC"}
+CustomDevice:
+  gen: 0

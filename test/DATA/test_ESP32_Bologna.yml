@@ -1,0 +1,16 @@
+Bologna:
+  WeightSensor:
+    ip: "192.168.0.100"
+    location: "Bologna"
+    type: "CustomDevice"
+    command: sensor
+    sensor name: hx711_cellona
+    location: value
+  TemperatureSensor:
+    ip: "192.168.0.100"
+    location: "Bologna"
+    type: "CustomDevice"
+    command: sensor
+    sensor name: temperature
+    location: value
+     

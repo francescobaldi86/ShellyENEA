@@ -7,6 +7,8 @@ with open(os.path.join(__HERE__, 'data', 'shelly_data_config.yaml')) as file:
     BASE_CONFIG = yaml.safe_load(file)
 
 
+
+
 class Shelly:
     """
     Generic class defining a single shelly
@@ -15,7 +17,7 @@ class Shelly:
         Shelly.verify_config_file(config)
         self.config = config
         self.ip = config["ip"]
-        self.mac_address = config['mac_address']
+        self.mac_address = config['mac_address'] if 'mac_address' in config.keys() else None
         self.location = config["location"]
         self.type = config["type"]
         self.data = pd.DataFrame()
@@ -29,12 +31,15 @@ class Shelly:
         Basic Shelly configuration
         """
         self.vars = {}
-        for var_info in BASE_CONFIG[self.type]['vars']:
-            try:
-                name = f'{var_info["unit"]}:{self.config[var_info["custom_name_field"]]}'.rstrip(":")
-            except KeyError:
-                name = f'{var_info["unit"]}:{var_info["default_name"]}'.rstrip(":")
-            self.vars[name] = var_info['location']
+        if 'vars' in BASE_CONFIG[self.type].keys():
+            for var_info in BASE_CONFIG[self.type]['vars']:
+                try:
+                    name = f'{var_info["unit"]}:{self.config[var_info["custom_name_field"]]}'.rstrip(":")
+                except KeyError:
+                    name = f'{var_info["unit"]}:{var_info["default_name"]}'.rstrip(":")
+                self.vars[name] = var_info['location']
+        else:
+            self.vars[self.config['sensor name']] = self.config['location']
 
     def config_addon(self, config):
         """
@@ -50,6 +55,8 @@ class Shelly:
         Reads data from the Shelly EM
         """
         match self.gen:
+            case 0:
+                url = f"http://{self.ip}/{self.config['command']}/{self.config['sensor name']}"
             case 1:
                 url = f"http://{self.ip}/status"
             case 2:
@@ -89,6 +96,8 @@ class Shelly:
                 return Shelly_Dimmer(config)
             case "1Plus":
                 return Shelly_1Plus(config)
+            case "CustomDevice":
+                return CustomDevice(config)
 
     
     @staticmethod
@@ -170,6 +179,13 @@ class Shelly_RGBW2(Shelly):
 class Shelly_1Plus(Shelly):
     """
     Extends the Shelly class to handle a Shelly 1PM device
+    """
+    def __init__(self, config):
+        super().__init__(config)
+
+class CustomDevice(Shelly):
+    """
+    Extends the Shelly class to handle a Custom device (Shelly or not)
     """
     def __init__(self, config):
         super().__init__(config)

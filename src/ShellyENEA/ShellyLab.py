@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 import pandas as pd
 from schedule import Scheduler
 from time import sleep
-from Shelly import Shelly
+from ShellyENEA.Shelly import Shelly
 
 
 
@@ -17,7 +17,7 @@ class ShellyLab():
         self.shellys = dict()
         for shelly_name, shelly_config in config.items():
             self.shellys[shelly_name] = Shelly.create_new(shelly_config)
-        self.current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        self.current_time = datetime.now()
         self.current_date = datetime.now().strftime("%Y-%m-%d")
         self.file_location = file_location
         self.scheduler = Scheduler()
@@ -26,7 +26,7 @@ class ShellyLab():
         """
         Reads data from all Shellys of the lab
         """
-        self.current_time = current_time if current_time else datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        self.current_time = current_time.strftime("%Y-%m-%d %H:%M:%S") if current_time else datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         for shelly_name, shelly in self.shellys.items():
             shelly.read_data(current_time = self.current_time)
         if verbose:
@@ -87,15 +87,15 @@ class ShellyLab():
         file_name = f'data_shelly_{self.name}'
         [value, unit] = duration.split(' ')
         match unit:
-            case 's', 'secs', 'seconds':
+            case 's' | 'secs' | 'seconds':
+                end_monitoring = datetime.now() + timedelta(seconds = float(value))
+            case 'm' | 'min' | 'mins' | 'minutes':
                 end_monitoring = datetime.now() + timedelta(minutes = float(value))
-            case 'm', 'min', 'mins', 'minutes':
-                end_monitoring = datetime.now() + timedelta(minutes = float(value))
-            case 'h', 'hours':
+            case 'h' | 'hours':
                 end_monitoring = datetime.now() + timedelta(hours = float(value))
-            case 'min', 'm':
+            case 'min' | 'm':
                 end_monitoring = datetime.now() + timedelta(minutes = float(value))
-            case 'd', 'days': 
+            case 'd' | 'days': 
                 end_monitoring = datetime.now() + timedelta(days = float(value))
         # Read data from the Shellys every READ_DATA_INTERVAL seconds
         self.scheduler.every(acquisition_rate).minutes.do(self.read_data)
